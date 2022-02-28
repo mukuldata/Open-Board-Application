@@ -1,0 +1,77 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font awesome cdn link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0-1/css/all.min.css" integrity="sha512-wDB6AYiYP4FO5Sxieamqy9wtpAY3qdHMqlhZecIEUu1YjkLw5gQf/4ZDgOzmCBAF5SheMjmugkpUSVoUrGbLkQ==
+    " crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Open Board</title>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Div 1 : Options -->
+    <div class="options-cont">
+        <i class="fas fa-bars"></i>
+    </div>
+    <!-- Div 2 :Images -->
+    <div class="tools-cont scale-tools">
+        <img class="pencil" src="images/pencil.png">
+        <img class="eraser" src="images/eraser.png">
+        <img class="download" src="images/download.png">
+        <img  class="upload"src="images/upload.png">
+        <img class="notes" src="images/notes.png">
+        <img  class="undo"src="images/undo.png">
+        <img  class="redo"src="images/redo.png">
+        
+        <!-- <img src="images/barretr_Pencil.svg"> -->
+    </div>
+
+    <!-- Options in pencil -->
+    <div class="pencil-tool-cont">
+        <!-- Pencil width -->
+        <div class="pencil-width-cont">
+            <input type="range" min="2" max="10" value="3" class="pencil-width" >
+        </div>
+        <!-- Pencil color -->
+        <div class="pencil-color-cont">
+            <div class="black pencil-color"></div>
+            <div class="blue pencil-color"></div>
+            <div class="red pencil-color"></div>
+        </div>
+    </div>
+
+    <!-- Options in eraser-->
+    <div class="eraser-tool-cont">
+        <input type="range" min="2" max="10" value="3"  class="eraser-width">
+    </div>
+    
+    <!-- Sticky Notes -->
+    <!-- <div class="sticky-cont">
+        <div class="header-cont">
+            <div class="minimize"></div> 
+            <div class="remove">
+                
+            </div>
+        </div>
+        <div class="note-cont">
+            <textarea></textarea>
+        </div>
+    </div> -->
+
+    <!-- To perform drawing graphics:2-D -->
+    <canvas></canvas>
+
+    <!-- Socket io  -->
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
+    <!-- Connecting frontend(html page) to the server(backend) using socket io -->
+    <script>
+        let socket=io.connect("http://localhost:5000");
+    </script>
+
+    <script  src="./tools.js"></script>
+    <script src="./canvas.js"></script>
+</body>
+</html>
+
