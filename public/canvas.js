@@ -1,7 +1,3 @@
-let canvas=document.querySelector("canvas");
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
 //  ******************* FOR UNDERSTANDING  ***********
 // // API (Static task)
 
@@ -32,6 +28,10 @@ canvas.height=window.innerHeight;
 // mousedown -> start new path 
 // mousemove -> path fill(graphics)
 
+let canvas=document.querySelector("canvas");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
 let pencilColor=document.querySelectorAll(".pencil-color");
 let pencilWidthElem=document.querySelector(".pencil-width");
 let eraserWidthElem=document.querySelector(".eraser-width");
@@ -43,6 +43,11 @@ let eraserWidth=eraserWidthElem.value;
 
 let redo=document.querySelector(".redo");
 let undo=document.querySelector(".undo");
+
+//Undo and Redo operations:
+let undoRedoTracker=[];     //Data
+let track=0; //Represent which action to perform from  tracker array
+//While mouseup
 
 //First:
 let tool=canvas.getContext("2d");
@@ -57,10 +62,7 @@ let mouseDown=false;
 //tool.beginPath();
 //tool.moveTo(e.clientX,e.clientY);
 
-//Undo and Redo operations:
-let undoRedoTracker=[];     //Data
-let track=0; //Represent which action to perform from  tracker array
-//While mouseup
+
 
 canvas.addEventListener("mousedown",(e)=>{
     mouseDown=true;
@@ -84,8 +86,8 @@ canvas.addEventListener("mousemove",(e)=>{
     let data={
         x:e.clientX,
         y:e.clientY,
-        color:eraserFlag ? eraserColor: penColor,
-        width:eraserFlag ? eraserWidth : penWidth
+        color: eraserFlag ? eraserColor : penColor,
+        width: eraserFlag ? eraserWidth : penWidth
     }
     socket.emit("drawStroke",data);
       }
@@ -114,8 +116,8 @@ function startPath(strokeObj){
 }
 
 function drawStroke(strokeObj){
-    lineWidth=strokeObj.width;
-    strokeStyle=strokeObj.color;
+    tool.lineWidth=strokeObj.width;
+    tool.strokeStyle=strokeObj.color;
     tool.lineTo(strokeObj.x,strokeObj.y);
     tool.stroke()
 }
@@ -182,7 +184,7 @@ undo.addEventListener("click",(e)=>{
     // Sending data to server:
     let data={
         trackValue:track,
-        undoRedoTracker:undoRedoTracker
+        undoRedoTracker
     }
     socket.emit("undoRedo",data);
     //track Action:
@@ -199,7 +201,7 @@ redo.addEventListener("click",(e)=>{
         if(track<undoRedoTracker.length-1) track++;
         let data={
             trackValue:track,
-            undoRedoTracker:undoRedoTracker
+            undoRedoTracker
         }
         socket.emit("undoRedo",data);
         //track Action:
