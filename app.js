@@ -15,7 +15,8 @@
 // visible in package.json
 
 //Background:
-// 4. Run server ---> node app.js   --->nodemon app.js
+// 4. Run server ---> node app.js   --->nodemon app.js--> 
+//    npm start(changed in package.json)  **
 // 5.Server Listen
 // 6 Connect frontend (using socket cdn)
 //   whose response we get in backend
@@ -34,7 +35,7 @@ const socket=require("socket.io");  //will return a function
 const app=express();
 
 //To make server ready to listen:
-let port=5000;      // giving port number
+let port=process.env.PORT || 5000;      //deployment number or giving port number
 let server=app.listen(port,()=>{
     console.log("Listening to port "+port);
 })
