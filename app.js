@@ -29,10 +29,27 @@
 //To access express and socket.io
 const express=require("express");
 const socket=require("socket.io");  //will return a function
+const cors = require('cors'); // Import CORS middleware
 
 //will return a function by which application is initialized 
 // and become server ready;
 const app=express();
+
+
+app.use(cors({
+    origin: 'https://open-board-application.vercel.app', // Your frontend URL
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+}));
+
+const io = new Server(server, {
+    cors: {
+        origin: 'https://open-board-application.vercel.app', // Frontend URL
+        methods: ['GET', 'POST'],
+        credentials: true,
+    },
+});
 
 //To make server ready to listen:
 let port=process.env.PORT || 5000;      //deployment number or giving port number
