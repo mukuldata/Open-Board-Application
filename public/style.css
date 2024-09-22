@@ -1,5 +1,3 @@
-/* While doing css --> first give a background color and height 
-    and with to element to clearly it */
 
 * {
     box-sizing:border-box;
@@ -11,7 +9,6 @@ body{
 .options-cont{
     height:4rem;
     width:3.5rem;
-    /* https://flatuicolors.com/palette/us */
     background-color: #e0eaee;
     position: absolute;
     top:2rem;
@@ -21,7 +18,6 @@ body{
     align-items:center;
     border-radius:50%;
     font-size:1.5rem;
-    /* https://getcssscan.com/css-box-shadow-examples */
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
 }
@@ -165,6 +161,21 @@ justify-content: space-around;
 .remove{
     background-color: red;
 }
+.minimize, .remove {
+    display: flex;           /* Use flexbox */
+    justify-content: center;  /* Center horizontally */
+    align-items: center;      /* Center vertically */
+
+
+}
+
+.icons {
+    font-size: 0.9rem;       /* Adjust size of icons */
+    font-weight: bold;       /* Make the icon bold (if supported) */
+    color: #333;             /* Optional: Set a custom color */
+    cursor:pointer
+}
+
 .note-cont{
     height:calc(100% - 2rem);
     /* background-color: coral; */
@@ -184,3 +195,32 @@ img{
     height:100%;
     width:100%;
 }
+.formatting-options {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    background-color: #e0eaee;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .formatting-options button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  
+  .formatting-options input[type="color"] {
+    width: 40px;
+    height: 30px;
+    cursor: pointer;
+  }
+
+  
+#color-picker{
+    position : "absolute";
+    bottom:"5px";
+     left : "5px";
+}
+  

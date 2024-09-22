@@ -67,8 +67,7 @@ notes.addEventListener("click", (e) => {
   // Sticky with text area and without spell check:
   let stickyTemplateHTML =
     `<div class="header-cont">
-     <div class="minimize"></div>
-     <div class="remove"></div>
+     <div class="remove"><i class="icons fa-solid fa-xmark"></i></div>
  </div>
  <div class="note-cont">
      <textarea spellcheck="false"></textarea>
@@ -88,14 +87,15 @@ function noteActions(minimize, remove, stickyCont) {
   })
 
 //Minimize:
-  minimize.addEventListener("click", (e) => {
-    let noteCont = stickyCont.querySelector(".note-cont");
-    // getComputedStyle() method gets the computed CSS properties 
-    // and values of an HTML element
-    let display = getComputedStyle(noteCont).getPropertyValue("display");
-    if (display == "none") noteCont.style.display = "block";
-    else noteCont.style.display = "none";
-  })
+  // minimize.addEventListener("click", (e) => {
+  //   let noteCont = stickyCont.querySelector(".note-cont");
+  //   let colorPicker=stickyCont.querySelector(".")
+  //   // getComputedStyle() method gets the computed CSS properties 
+  //   // and values of an HTML element
+  //   let display = getComputedStyle(noteCont).getPropertyValue("display");
+  //   if (display == "none") noteCont.style.display = "block";
+  //   else noteCont.style.display = "none";
+  // })
 }
 
 //Drag and drop functionality:
@@ -147,8 +147,7 @@ upload.addEventListener("click", (e) => {
     let stickyTemplateHTML =
   // Putting image url :
 `<div class="header-cont">
-  <div class="minimize"></div>
-    <div class="remove"></div>
+    <div class="remove"><i class="icons fa-solid fa-xmark"></i></div>
   </div>
   <div class="note-cont">
      <img src="${url}"/>   
@@ -164,9 +163,32 @@ upload.addEventListener("click", (e) => {
 function createSticky(stickyTemplateHTML) {
   let stickyCont = document.createElement("div");
   stickyCont.setAttribute("class", "sticky-cont");
-  //  enclosing html as `` in javascript file:
   stickyCont.innerHTML = stickyTemplateHTML;
+  
 
+  // Create a color picker input element
+  let colorPicker = document.createElement("input");
+  colorPicker.setAttribute("class", "color-picker");
+  colorPicker.setAttribute("class", "icons");
+  colorPicker.setAttribute("type", "color");
+  colorPicker.style.position = "absolute";
+  colorPicker.style.bottom = "5px";
+  colorPicker.style.left = "5px";
+
+  // Set a default color (optional)
+  // stickyCont.style.border  = `6px ridge`
+
+  // Append the color picker to the sticky note container
+  stickyCont.appendChild(colorPicker);
+
+  // Change background color based on color picker value
+  colorPicker.addEventListener("input", (e) => {
+    console.log(e);
+    console.log(e.target.value);
+    stickyCont.style.boxShadow=`${e.target.value} 0px 5px 15px`;
+
+    // stickyCont.style.border = `6px ridge ${e.target.value}`;
+  });
 
   document.body.appendChild(stickyCont);
 
@@ -175,13 +197,14 @@ function createSticky(stickyTemplateHTML) {
   noteActions(minimize, remove, stickyCont);
 
   stickyCont.onmousedown = function (event) {
-    dragAndDrop(stickyCont, event)
+    dragAndDrop(stickyCont, event);
   };
 
   stickyCont.ondragstart = function () {
     return false;
-  }
-};
+  };
+}
+
 
 
 

@@ -4,52 +4,25 @@
 // event-based communication between the browser and the server. 
 //Using Socket.io ---> Javascript Library
 
-//Nodemon -->if app crashes due to some error it will rectify
-//           it and restart
-// Steps:
-// 1. npm init ---->        in terminal
-// 2. npm install express    --> Install express
-// 3. npm install socket.io   --> Install socket.io
-
-// It will install all required dependencies and it can be 
-// visible in package.json
-
-//Background:
-// 4. Run server ---> node app.js   --->nodemon app.js--> 
-//    npm start(changed in package.json)  **
-// 5.Server Listen
-// 6 Connect frontend (using socket cdn)
-//   whose response we get in backend
-// 7 open application using url in html file
-
-
 //*******************END*********************
 
 //  Code:
 //To access express and socket.io
 const express=require("express");
-const socket=require("socket.io");  //will return a function
-const cors = require('cors'); // Import CORS middleware
-
-//will return a function by which application is initialized 
-// and become server ready;
+const socket=require("socket.io"); 
+const cors = require('cors'); 
+require('dotenv').config();
 const app=express();
 
 
 app.use(cors({
-    origin: 'https://open-board-application.vercel.app', // Your frontend URL
+    origin: ["localhost:3000",process.env.FRONTEND_URL],// Your frontend URL
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
 }));
 
-const io = new Server(server, {
-    cors: {
-        origin: 'https://open-board-application.vercel.app', // Frontend URL
-        methods: ['GET', 'POST'],
-        credentials: true,
-    },
-});
+
 
 //To make server ready to listen:
 let port=process.env.PORT || 5000;      //deployment number or giving port number
@@ -61,11 +34,16 @@ let server=app.listen(port,()=>{
 app.use(express.static("public"));
 
 //To check connection is established bw server and app;
-let io=socket(server);
+let io=socket(server,{
+    cors: {
+        origin: ['localhost:3000',process.env.FRONTEND_URL], // Frontend URL
+        methods: ['GET', 'POST'],
+        credentials: true,
+    }});
 
 //like addeventlistner in javascript
 io.on("connection",(socket)=>{
-    console.log("Socket Connection Established");
+    console.log("Socket Connection Established",socket.id);
      //Recieved data in server:
     //Trigger this callback function when startPath is called;
     //startPath:
