@@ -149,7 +149,7 @@ canvas.addEventListener("mouseup", (e) => {
 
 // Touch end event for mobile
 canvas.addEventListener("touchend", (e) => {
-    e.preventDefault(); // Prevent default touch behavior (like scrolling)
+    // e.preventDefault(); // Prevent default touch behavior (like scrolling)
     mouseDown = false;
     handlePathEnd();
 });
