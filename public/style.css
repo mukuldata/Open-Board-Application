@@ -58,6 +58,10 @@ img{
  width:5rem;
 }
 
+@media (max-width: 768px) {
+    .tools-cont{ width:200vw;}
+}
+
 .pencil-tool-cont{
     width:8rem;
     height:5rem;
