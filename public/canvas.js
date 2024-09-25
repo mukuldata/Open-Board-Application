@@ -88,8 +88,10 @@ canvas.addEventListener("mousedown", (e) => {
 
 // Touch start event for mobile
 canvas.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 1) {
     e.preventDefault(); // Prevent scrolling when touching the canvas
     mouseDown = true;
+
     let coords = getCoordinates(e);
 
     let data = {
@@ -97,6 +99,7 @@ canvas.addEventListener("touchstart", (e) => {
         y: coords.y
     };
     socket.emit("startPath", data);
+}
 });
 
 function getCoordinates(e) {
@@ -120,8 +123,10 @@ canvas.addEventListener("mousemove", (e) => {
 });
 
 canvas.addEventListener("touchmove", (e) => {
-    e.preventDefault(); // Prevent scrolling on touch devices while drawing
-    handleDraw(e);
+    if (e.touches.length === 1) {
+        e.preventDefault(); // Prevent scrolling while drawing
+        handleDraw(e);  // Custom function to handle the drawing logic
+    }
 });
 
 
@@ -149,9 +154,12 @@ canvas.addEventListener("mouseup", (e) => {
 
 // Touch end event for mobile
 canvas.addEventListener("touchend", (e) => {
-    // e.preventDefault(); // Prevent default touch behavior (like scrolling)
-    mouseDown = false;
-    handlePathEnd();
+    if (e.touches.length === 1) {
+        e.preventDefault(); // Prevent default touch behavior (like scrolling)
+        mouseDown = false;
+        handlePathEnd();
+    }
+  
 });
 
 // Shared function to handle the end of a path (for both mouse and touch)

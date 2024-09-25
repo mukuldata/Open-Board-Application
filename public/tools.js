@@ -101,8 +101,8 @@ function noteActions(minimize, remove, stickyCont) {
 
 //Drag and drop functionality:
 function dragAndDrop(element, event) {
-
   let shiftX, shiftY;
+  let isDragging = false;
 
   // Function to get the coordinates for both mouse and touch events
   function getCoordinates(e) {
@@ -147,42 +147,68 @@ function dragAndDrop(element, event) {
 
   // Touch move event for mobile
   function onTouchMove(event) {
-    //event.preventDefault(); // Prevent scrolling while dragging
+    if (event.touches.length > 1) {
+      // Allow multi-touch gestures (zooming)
+      return;
+    }
+    
+    // Prevent default only when dragging is happening
+    if (isDragging) {
+      event.preventDefault(); // Prevent scrolling while dragging
+    }
+
     let coords = getCoordinates(event);
     moveAt(coords.pageX, coords.pageY);
   }
 
   // Start drag on mouse down or touch start
   document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('touchmove', onTouchMove,{ passive: false });
+  document.addEventListener('touchmove', onTouchMove, { passive: false }); // passive: false to allow preventDefault when needed
+
+  // Initiate drag on mousedown or touchstart
+  function startDrag(event) {
+    isDragging = true;
+    let coords = getCoordinates(event);
+    shiftX = coords.clientX - element.getBoundingClientRect().left;
+    shiftY = coords.clientY - element.getBoundingClientRect().top;
+    moveAt(coords.pageX, coords.pageY);
+  }
 
   // Stop dragging on mouseup or touchend
   function stopDrag() {
+    isDragging = false;
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('touchmove', onTouchMove);
     document.removeEventListener('mouseup', stopDrag);
     document.removeEventListener('touchend', stopDrag);
   }
 
-  // Mouse up event to stop dragging
-  element.onmouseup = function () {
+  // Mouse down or touch start event to initiate drag
+  element.onmousedown = function(event) {
+    startDrag(event);
+  };
+
+  element.ontouchstart = function(event) {
+    if (event.touches.length === 1) { // Only start dragging if it's a single touch
+      startDrag(event);
+    }
+  };
+
+  // Mouse up or touch end event to stop dragging
+  element.onmouseup = function() {
     stopDrag();
   };
 
-  // Touch end event to stop dragging on mobile
-  element.ontouchend = function () {
+  element.ontouchend = function() {
     stopDrag();
   };
 
-  // For mobile, we need to also listen to the touchstart event
-  document.addEventListener('touchstart', function (event) {
-    let coords = getCoordinates(event);
-    shiftX = coords.clientX - element.getBoundingClientRect().left;
-    shiftY = coords.clientY - element.getBoundingClientRect().top;
-
-    moveAt(coords.pageX, coords.pageY);
-  }, { passive: false }); // Adding { passive: false } to prevent default scrolling behavior
+  // Prevent the default drag behavior (text selection, etc.)
+  element.ondragstart = function() {
+    return false;
+  };
 }
+
 
 
 //Uploading the file:
