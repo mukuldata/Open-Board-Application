@@ -55,60 +55,113 @@ tool.strokeStyle=penColor;
 tool.lineWidth=penWidth;
 
 let mouseDown=false;
-//clientX and clientY gives the horizontal and vertical of click 
-//on the screen;
-//Passing  this as obj now:
-
-//tool.beginPath();
-//tool.moveTo(e.clientX,e.clientY);
 
 
 
-canvas.addEventListener("mousedown",(e)=>{
-    mouseDown=true;
-    // startPath({
-    //     x:e.clientX,
-    //     y:e.clientY,
-    // })
+// Function to get the coordinates from either mouse or touch event
+function getCoordinates(e) {
 
-    // Sending data to the server:
-    let data={
-        x:e.clientX,
-        y:e.clientY
+    if (e.touches && e.touches.length > 0) {
+        return {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY
+        };
+    } else {
+        return {
+            x: e.clientX,
+            y: e.clientY
+        };
     }
-    socket.emit("startPath",data);
-})
+}
 
-canvas.addEventListener("mousemove",(e)=>{
-    if(mouseDown)
-    // Send data to sever:
-     {
-    let data={
-        x:e.clientX,
-        y:e.clientY,
-        color: eraserFlag ? eraserColor : penColor,
-        width: eraserFlag ? eraserWidth : penWidth
+// Mouse down event for desktop
+canvas.addEventListener("mousedown", (e) => {
+    mouseDown = true;
+    let coords = getCoordinates(e);
+
+    let data = {
+        x: coords.x,
+        y: coords.y
+    };
+    socket.emit("startPath", data);
+});
+
+// Touch start event for mobile
+canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Prevent scrolling when touching the canvas
+    mouseDown = true;
+    let coords = getCoordinates(e);
+
+    let data = {
+        x: coords.x,
+        y: coords.y
+    };
+    socket.emit("startPath", data);
+});
+
+function getCoordinates(e) {
+    if (e.touches && e.touches.length > 0) {
+        return {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY
+        };
+    } else {
+        return {
+            x: e.clientX,
+            y: e.clientY
+        };
     }
-    socket.emit("drawStroke",data);
-      }
-   
-    //   drawStroke({
-    //     x:e.clientX,
-    //     y:e.clientY,
-    //   // i am assigning the color that was present before erasing:
-    //     color:eraserFlag ? eraserColor: penColor,
-    //     width:eraserFlag ? eraserWidth : penWidth
-    // })
-})
+}
 
-canvas.addEventListener("mouseup",(e)=>{
-    mouseDown=false;
+
+
+canvas.addEventListener("mousemove", (e) => {
+    handleDraw(e);
+});
+
+canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault(); // Prevent scrolling on touch devices while drawing
+    handleDraw(e);
+});
+
+
+function handleDraw(e) {
+    console.log("canvas mouseDown or touchMove");
+    if (mouseDown) {
+        let coords = getCoordinates(e);
+
+        let data = {
+            x: coords.x,
+            y: coords.y,
+            color: eraserFlag ? eraserColor : penColor,
+            width: eraserFlag ? eraserWidth : penWidth
+        };
+
+        socket.emit("drawStroke", data);
+    }
+}
+
+// Mouse up event for desktop
+canvas.addEventListener("mouseup", (e) => {
+    mouseDown = false;
+    handlePathEnd();
+});
+
+// Touch end event for mobile
+canvas.addEventListener("touchend", (e) => {
+    e.preventDefault(); // Prevent default touch behavior (like scrolling)
+    mouseDown = false;
+    handlePathEnd();
+});
+
+// Shared function to handle the end of a path (for both mouse and touch)
+function handlePathEnd() {
     // Undo and redo functionality:
-    let url=canvas.toDataURL();
-    undoRedoTracker.push(url);
-    track=undoRedoTracker.length-1;
+    let url = canvas.toDataURL();  // Get the current state of the canvas as a data URL
+    undoRedoTracker.push(url);     // Push the current state onto the undo/redo stack
+    track = undoRedoTracker.length - 1;  // Update the current track position
+}
 
-})
 
 function startPath(strokeObj){
     tool.beginPath();
@@ -187,12 +240,6 @@ undo.addEventListener("click",(e)=>{
         undoRedoTracker
     }
     socket.emit("undoRedo",data);
-    //track Action:
-    // trackObj={
-    //     trackValue:track,
-    //     undoRedoTracker:undoRedoTracker
-    // }
-    // undoRedoCanvas(trackObj);
 
 })
 
@@ -204,12 +251,6 @@ redo.addEventListener("click",(e)=>{
             undoRedoTracker
         }
         socket.emit("undoRedo",data);
-        //track Action:
-        // trackObj={
-        //     trackValue:track,
-        //     undoRedoTracker:undoRedoTracker
-        // }
-        // undoRedoCanvas(trackObj);
 })
 
 function undoRedoCanvas(trackObj){

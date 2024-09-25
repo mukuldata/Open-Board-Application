@@ -45,6 +45,7 @@ function closeTools() {
 // Toogle pencil:
 pencilTool.addEventListener("click", (e) => {
   // true-->show pencil tool , false--> hide pencil tool
+  console.log("pencil tool is working");
   pencilFlag = !pencilFlag;
   // by default display is block:
   if (pencilFlag) pencilCont.style.display = "block";
@@ -101,36 +102,88 @@ function noteActions(minimize, remove, stickyCont) {
 //Drag and drop functionality:
 function dragAndDrop(element, event) {
 
-  let shiftX = event.clientX - element.getBoundingClientRect().left;
-  let shiftY = event.clientY - element.getBoundingClientRect().top;
+  let shiftX, shiftY;
+
+  // Function to get the coordinates for both mouse and touch events
+  function getCoordinates(e) {
+    if (e.touches && e.touches.length > 0) {
+      return {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+        pageX: e.touches[0].pageX,
+        pageY: e.touches[0].pageY
+      };
+    } else {
+      return {
+        clientX: e.clientX,
+        clientY: e.clientY,
+        pageX: e.pageX,
+        pageY: e.pageY
+      };
+    }
+  }
+
+  // Get initial shift values
+  let coords = getCoordinates(event);
+  shiftX = coords.clientX - element.getBoundingClientRect().left;
+  shiftY = coords.clientY - element.getBoundingClientRect().top;
 
   element.style.position = 'absolute';
   element.style.zIndex = 1000;
 
+  moveAt(coords.pageX, coords.pageY);
 
-  moveAt(event.pageX, event.pageY);
-
-  // moves the element at (pageX, pageY) coordinates
-  // taking initial shifts into account
+  // Function to move the element at (pageX, pageY)
   function moveAt(pageX, pageY) {
     element.style.left = pageX - shiftX + 'px';
     element.style.top = pageY - shiftY + 'px';
   }
 
+  // Mouse move event for desktop
   function onMouseMove(event) {
-    moveAt(event.pageX, event.pageY);
+    let coords = getCoordinates(event);
+    moveAt(coords.pageX, coords.pageY);
   }
 
-  // move the element on mousemove
-  document.addEventListener('mousemove', onMouseMove);
+  // Touch move event for mobile
+  function onTouchMove(event) {
+    //event.preventDefault(); // Prevent scrolling while dragging
+    let coords = getCoordinates(event);
+    moveAt(coords.pageX, coords.pageY);
+  }
 
-  // drop the element, remove unneeded handlers
-  element.onmouseup = function () {
+  // Start drag on mouse down or touch start
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('touchmove', onTouchMove,{ passive: false });
+
+  // Stop dragging on mouseup or touchend
+  function stopDrag() {
     document.removeEventListener('mousemove', onMouseMove);
-    element.onmouseup = null;
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('mouseup', stopDrag);
+    document.removeEventListener('touchend', stopDrag);
+  }
+
+  // Mouse up event to stop dragging
+  element.onmouseup = function () {
+    stopDrag();
   };
 
+  // Touch end event to stop dragging on mobile
+  element.ontouchend = function () {
+    stopDrag();
+  };
+
+  // For mobile, we need to also listen to the touchstart event
+  document.addEventListener('touchstart', function (event) {
+    let coords = getCoordinates(event);
+    shiftX = coords.clientX - element.getBoundingClientRect().left;
+    shiftY = coords.clientY - element.getBoundingClientRect().top;
+
+    moveAt(coords.pageX, coords.pageY);
+  }, { passive: false }); // Adding { passive: false } to prevent default scrolling behavior
 }
+
 
 //Uploading the file:
 let upload = document.querySelector(".upload");
@@ -196,13 +249,20 @@ function createSticky(stickyTemplateHTML) {
   let remove = stickyCont.querySelector(".remove");
   noteActions(minimize, remove, stickyCont);
 
-  stickyCont.onmousedown = function (event) {
-    dragAndDrop(stickyCont, event);
-  };
+ // Handle mouse down and touch start for drag-and-drop functionality
+stickyCont.onmousedown = function(event) {
+  dragAndDrop(stickyCont, event);  // Handle drag for desktop
+};
 
-  stickyCont.ondragstart = function () {
-    return false;
-  };
+// Handle touch start event for drag-and-drop functionality on mobile
+stickyCont.ontouchstart = function(event) {
+  dragAndDrop(stickyCont, event);  // Handle drag for mobile
+},{ passive: false };
+
+// Prevent the default drag behavior (e.g., text selection, image dragging)
+stickyCont.ondragstart = function() {
+  return false;  // Disable default drag behavior
+};
 }
 
 
