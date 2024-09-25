@@ -15,7 +15,7 @@ body{
     left:1rem;
     display:flex;
     justify-content: center;
-    margin-right:10px;
+    /* margin-right:10px; */
     align-items:center;
     border-radius:50%;
     font-size:1.5rem;
@@ -44,7 +44,7 @@ img{
 .tools-cont{
     display:flex;
     height:5rem;
-    width:160vw;
+    width:80vw;
     background-color: #e0eaee;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     justify-content: space-around;
